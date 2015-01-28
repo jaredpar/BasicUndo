@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>BasicUndo</id>
+    <version>0.9.0</version>
+    <title>BasicUndo</title>
+    <authors>JaredPar</authors>
+    <owners>JaredPar</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/jaredpar/BasicUndo</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A basic implementation of ITextUndoHistoryRegistry</description>
+  </metadata>
+</package>
