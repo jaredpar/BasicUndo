@@ -226,7 +226,7 @@ namespace BasicUndo
         /// </summary>
         IEnumerable<ITextUndoTransaction> ITextUndoHistory.RedoStack
         {
-            get { throw new NotSupportedException(); }
+            get { return _redoStack; }
         }
 
         TextUndoHistoryState ITextUndoHistory.State
@@ -259,7 +259,7 @@ namespace BasicUndo
         /// </summary>
         IEnumerable<ITextUndoTransaction> ITextUndoHistory.UndoStack
         {
-            get { throw new NotSupportedException(); }
+            get { return _undoStack; }
         }
 
         event EventHandler<TextUndoTransactionCompletedEventArgs> ITextUndoHistory.UndoTransactionCompleted
