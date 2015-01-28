@@ -62,8 +62,13 @@ namespace BasicUndo
                 for (var i = 0; i < count; i++)
                 {
                     var current = _redoStack.Peek();
-                    current.Do();
+                    if (!current.CanRedo)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
                     _redoStack.Pop();
+                    current.Do();
                     _undoStack.Push(current);
                 }
 
@@ -84,12 +89,16 @@ namespace BasicUndo
                 for (var i = 0; i < count; i++)
                 {
                     var current = _undoStack.Peek();
-                    current.Undo();
+                    if (!current.CanUndo)
+                    {
+                        throw new InvalidOperationException();
+                    }
                     _undoStack.Pop();
+                    current.Undo();
                     _redoStack.Push(current);
-                }
 
-                RaiseUndoRedoHappened();
+                    RaiseUndoRedoHappened();
+                }
             }
             finally
             {
@@ -122,10 +131,13 @@ namespace BasicUndo
             }
             else
             {
+                var top = _openTransactionStack.Peek();
                 foreach (var cur in transaction.UndoPrimitives)
                 {
-                    _openTransactionStack.Peek().UndoPrimitives.Add(cur);
+                    top.AddUndo(cur);
                 }
+
+                transaction.UndoPrimitives.Clear();
             }
         }
 

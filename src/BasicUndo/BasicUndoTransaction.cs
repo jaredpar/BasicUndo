@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.Text.Operations;
 
 namespace BasicUndo
@@ -8,6 +9,7 @@ namespace BasicUndo
     {
         private readonly BasicUndoHistory _textUndoHistory;
         private readonly List<ITextUndoPrimitive> _primitiveList = new List<ITextUndoPrimitive>();
+        private bool _completed;
 
         internal string Description
         {
@@ -20,17 +22,44 @@ namespace BasicUndo
             get { return _primitiveList; }
         }
 
+        internal bool CanRedo
+        {
+            get { return _primitiveList.All(x => x.CanRedo); }
+        }
+
+        internal bool CanUndo
+        {
+            get { return _primitiveList.All(x => x.CanUndo); }
+        }
+
         internal BasicUndoTransaction(BasicUndoHistory textUndoHistory, string description)
         {
             _textUndoHistory = textUndoHistory;
             Description = description;
         }
 
+        internal void AddUndo(ITextUndoPrimitive undo)
+        {
+            System.Diagnostics.Debug.Assert(undo.CanUndo);
+            _primitiveList.Add(undo);
+            undo.Parent = this;
+        }
+
+        private void HandleCompleted()
+        {
+            if (_completed)
+            {
+                throw new InvalidOperationException();
+            }
+
+            _completed = true;
+        }
+
         #region ITextUndoTransaction
 
         void ITextUndoTransaction.AddUndo(ITextUndoPrimitive undo)
         {
-            _primitiveList.Add(undo);
+            AddUndo(undo);
         }
 
         /// <summary>
@@ -38,7 +67,7 @@ namespace BasicUndo
         /// </summary>
         bool ITextUndoTransaction.CanRedo
         {
-            get { throw new NotSupportedException(); }
+            get { return CanRedo; }
         }
 
         /// <summary>
@@ -46,7 +75,7 @@ namespace BasicUndo
         /// </summary>
         bool ITextUndoTransaction.CanUndo
         {
-            get { throw new NotSupportedException(); }
+            get { return CanUndo; }
         }
 
         ITextUndoHistory ITextUndoTransaction.History
@@ -83,11 +112,13 @@ namespace BasicUndo
 
         void ITextUndoTransaction.Cancel()
         {
+            HandleCompleted();
             _textUndoHistory.OnTransactionClosed(this, didComplete: false);
         }
 
         void ITextUndoTransaction.Complete()
         {
+            HandleCompleted();
             _textUndoHistory.OnTransactionClosed(this, didComplete: true);
         }
 
