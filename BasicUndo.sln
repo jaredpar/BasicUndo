@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicUndo", "BasicUndo.csproj", "{B7B5D1A7-0FEA-42B8-BF1D-F8C98AE052A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicUndo", "src\BasicUndo\BasicUndo.csproj", "{B7B5D1A7-0FEA-42B8-BF1D-F8C98AE052A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
