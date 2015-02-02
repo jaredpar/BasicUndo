@@ -32,6 +32,12 @@ namespace BasicUndo
             get { return _primitiveList.All(x => x.CanUndo); }
         }
 
+        internal IMergeTextUndoTransactionPolicy MergePolicy
+        {
+            get;
+            set;
+        }
+
         internal BasicUndoTransaction(BasicUndoHistory textUndoHistory, string description)
         {
             _textUndoHistory = textUndoHistory;
@@ -85,8 +91,8 @@ namespace BasicUndo
 
         IMergeTextUndoTransactionPolicy ITextUndoTransaction.MergePolicy
         {
-            get;
-            set;
+            get { return MergePolicy; }
+            set { MergePolicy = value; }
         }
 
         ITextUndoTransaction ITextUndoTransaction.Parent

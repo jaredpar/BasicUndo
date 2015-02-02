@@ -122,12 +122,7 @@ namespace BasicUndo
 
             if (_openTransactionStack.Count == 0)
             {
-                _undoStack.Push(transaction);
-                var list = _undoTransactionCompleted;
-                if (list != null)
-                {
-                    list(this, new TextUndoTransactionCompletedEventArgs(null, TextUndoTransactionCompletionResult.TransactionAdded));
-                }
+                OnTransactionStackCompleted(transaction);
             }
             else
             {
@@ -138,6 +133,40 @@ namespace BasicUndo
                 }
 
                 transaction.UndoPrimitives.Clear();
+            }
+        }
+
+        private void OnTransactionStackCompleted(BasicUndoTransaction transaction)
+        {
+            Debug.Assert(_openTransactionStack.Count == 0);
+
+            ITextUndoTransaction eventArgument = transaction;
+            var result = TextUndoTransactionCompletionResult.TransactionAdded;
+            if (_undoStack.Count > 0)
+            {
+                var previous = _undoStack.Peek();
+                if (transaction.MergePolicy != null &&
+                    previous.MergePolicy != null &&
+                    previous.MergePolicy.TestCompatiblePolicy(transaction.MergePolicy) &&
+                    previous.MergePolicy.CanMerge(newerTransaction: transaction, olderTransaction: previous))
+                {
+                    eventArgument = previous;
+                    previous.MergePolicy.PerformTransactionMerge(existingTransaction: previous, newTransaction: transaction);
+                }
+                else
+                {
+                    _undoStack.Push(transaction);
+                }
+            }
+            else
+            {
+                _undoStack.Push(transaction);
+            }
+
+            var list = _undoTransactionCompleted;
+            if (list != null)
+            {
+                list(this, new TextUndoTransactionCompletedEventArgs(eventArgument, result));
             }
         }
 
