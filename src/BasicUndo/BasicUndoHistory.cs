@@ -314,6 +314,12 @@ namespace BasicUndo
             get { return _properties; }
         }
 
+        ITextUndoTransaction ITextUndoHistory2.CreateInvisibleTransaction(string description)
+        {
+            // We don't support invisible transactions, so return a normal transaction.
+            return CreateTransaction(description);
+        }
+
         #endregion
 
         #region IBasicUndoHistory
