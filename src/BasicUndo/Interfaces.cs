@@ -27,7 +27,7 @@ namespace BasicUndo
         bool TryGetBasicUndoHistory(object context, out IBasicUndoHistory basicUndoHistory);
     }
 
-    public interface IBasicUndoHistory : ITextUndoHistory
+    public interface IBasicUndoHistory : ITextUndoHistory2
     {
         /// <summary>
         /// Clear out all of the state including the undo and redo stacks
